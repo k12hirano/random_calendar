@@ -4,16 +4,17 @@ import 'package:random_calendar/popup.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class Root extends StatefulWidget {
-
   @override
   _RootState createState() => _RootState();
-
 }
 
 class _RootState extends State<Root> {
 
   @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
+    final adjustsizeh = MediaQuery.of(context).size.height * 0.0011;
     DateTime _selectedDay;
     DateTime _focusedDay;
     Map<DateTime, List> _eventList = {};
@@ -31,25 +32,29 @@ class _RootState extends State<Root> {
     }
 
     Widget floatingButton(){
-      return IconButton(icon: Icon(Icons.add,color: Colors.white,), onPressed: (){Navigator.push(
+      return FloatingActionButton(child: Icon(Icons.list_alt,color: Colors.lightGreen),
+          backgroundColor: Colors.lightGreen,
+          onPressed: (){Navigator.push(
         context,
         MaterialPageRoute(builder: (context) =>Popup(
-        )),
-      );
+        )));
       });
     }
 
     Widget doButton(){
       return
-        Container( child:ElevatedButton(
+        Container(
+            height: height*0.08,
+            width: width*0.2,
+            child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              primary: Colors.lightBlue,
+              primary: Colors.white,
             ),
             onPressed: (){
               //TODO
             },
             child: Text('予定決定',
-                style:TextStyle(fontWeight: FontWeight.normal, color: Colors.white, fontSize: 20))));
+                style:TextStyle(fontWeight: FontWeight.bold, color: Colors.lightGreen, fontSize: 18))));
     }
 
     return Scaffold(
@@ -58,7 +63,7 @@ class _RootState extends State<Root> {
             elevation: 8,
             centerTitle: true,
             title:Text("ランダムカレンダー",style: TextStyle(color: Colors.white)),
-           // backgroundColor: Colors.brown[800],
+           backgroundColor: Colors.lightGreen,
             actions: [
              doButton()
             ]
@@ -68,11 +73,23 @@ class _RootState extends State<Root> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      TableCalendar(
+                      Container(
+                        height:height*0.8,
+                        //height: 400,
+                        //width: ,
+                        child:TableCalendar(
                           focusedDay: DateTime.now(),
                           firstDay: DateTime.utc(2020, 1, 1),
                           lastDay: DateTime.utc(2030, 12, 31),
                           locale: 'ja_JP',
+                          calendarFormat: CalendarFormat.month,
+                          calendarStyle: CalendarStyle(),
+                          rowHeight: 15,
+                          daysOfWeekHeight: 20,
+                          headerStyle: HeaderStyle(
+                            titleCentered: true,
+                            formatButtonVisible: false,
+                          ),
                         selectedDayPredicate: (day) {
                           return isSameDay(_selectedDay, day);
                         },
@@ -86,7 +103,7 @@ class _RootState extends State<Root> {
                         onPageChanged: (focusedDay) {
                           _focusedDay = focusedDay;
                         },
-                            )
+                            ))
                     ],
                   ),
             )
