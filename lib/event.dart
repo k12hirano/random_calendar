@@ -28,6 +28,6 @@ class Event {
       'year': year,
       'code': code,
       'enrollment': enrollment
-    }
+    };
   }
 }
