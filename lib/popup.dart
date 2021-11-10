@@ -1,5 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:random_calendar/db.dart';
+import 'package:random_calendar/event.dart';
+
+//todo ＤＢからデータ取得、　
+// やることリスト表示、　
+// やることリストの編集可能にする、　
+// スライドで削除できるようにする？　
+//ダイアログ内のレイアウト、書式、色設定、キャンセルの処理、チェックボックスの処理
 
 class Popup extends StatefulWidget {
 
@@ -21,6 +29,20 @@ class _PopupState extends State<Popup> {
   void dispose() {
     todotext?.dispose();
     super.dispose();
+  }
+
+  void insert() async {
+    await DB().insert(
+      Event(
+        title: todotext.text,
+        mode: null,
+        count: null,
+        year: DateTime.now().year,
+        month: DateTime.now().month,
+        code: DateTime.now().year+DateTime.now().month,
+        enrollment: DateTime.now().toString()
+      )
+    );
   }
 
   Widget build(BuildContext context) {
@@ -270,7 +292,7 @@ class _PopupState extends State<Popup> {
                                                   primary: Colors.lightGreen,
                                                 ),
                                                 onPressed: () {
-
+                                                  insert();
                                                 })),
                                         Container(
                                             height: height*0.17,

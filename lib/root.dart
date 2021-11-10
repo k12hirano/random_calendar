@@ -4,6 +4,13 @@ import 'package:random_calendar/popup.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+//todo　appbar:穴埋めボタン、ＤＢ登録、　
+// カレンダーの下にリストで指定した日の予定一覧表示、　
+// 指定した日を押した時の処理追加、　
+// 予定追加処理追加、　
+// 予定をアイコンかその他の表示方法でカレンダーのセル場に表示、　
+// ＤＢからデータ取得
+
 class Root extends StatefulWidget {
   @override
   _RootState createState() => _RootState();
