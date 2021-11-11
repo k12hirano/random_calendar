@@ -1,15 +1,16 @@
 import 'dart:collection';
 import 'package:flutter/material.dart';
+import 'package:random_calendar/db.dart';
+import 'package:random_calendar/plan.dart';
 import 'package:random_calendar/popup.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-//todo　appbar:穴埋めボタン、ＤＢ登録、　
-// カレンダーの下にリストで指定した日の予定一覧表示、　
+//todo　
+// カレンダーの下にリストで指定した日の予定一覧表示、
 // 指定した日を押した時の処理追加、　
 // 予定追加処理追加、　
 // 予定をアイコンかその他の表示方法でカレンダーのセル場に表示、　
-// ＤＢからデータ取得
 
 class Root extends StatefulWidget {
   @override
@@ -17,18 +18,52 @@ class Root extends StatefulWidget {
 }
 
 class _RootState extends State<Root> {
+  Map<DateTime, List> _eventList = {};
+  List<Plan> _plans = [];
+  final ScrollController _scrollController = ScrollController();
+  DateRangePickerController controller = DateRangePickerController();
+
+
+  @override
+  void initState() {
+    load();
+    super.initState();
+  }
+
+  @override
+  void dispose(){
+    controller = DateRangePickerController();
+    super.dispose();
+  }
+
+  Future<void> load() async {
+    _plans = await DB().getPlans();
+    List<dynamic> kari = [];
+    for(var i=0;i<_plans.length;i++) {
+      if(i+1<_plans.length){
+      if (_plans[i].datetime == _plans[i+1].datetime) {
+        kari.add(_plans[i]);
+      } else {
+        kari.add(_plans[i]);
+        _eventList[_plans[i].datetime] = kari;
+        kari.removeRange(0, kari.length);
+      }
+    } else {
+        kari.add(_plans[i]);
+        _eventList[_plans[i].datetime] = kari;
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     final adjustsizeh = MediaQuery.of(context).size.height * 0.0011;
-    final ScrollController _scrollController = ScrollController();
-    final DateRangePickerController controller = DateRangePickerController();
+
     DateTime _selectedDay;
     DateTime _focusedDay;
     int currentMonth;
-    Map<DateTime, List> _eventList = {};
     int getHashCode(DateTime key) {
       return key.day * 1000000 + key.month * 10000 + key.year;
     }
@@ -161,8 +196,12 @@ class _RootState extends State<Root> {
                       onDaySelected: (selectedDay, focusedDay) {
                         setState(() {
                           _selectedDay = selectedDay;
-                          _focusedDay =
-                              focusedDay; // update `_focusedDay` here as well
+                          //_focusedDay = focusedDay;
+                        });
+                      },
+                      onDayLongPressed: (selectedDay, focusedDay){
+                        setState(() {
+
                         });
                       },
                       eventLoader: _getEventForDay,

@@ -1,35 +1,26 @@
 class Plan {
-  int id;
   String title;
+  DateTime datetime;
   int year;
   int month;
-  int day;
-  int time;
-  int code;
   int place;
   String memo;
 
   Plan({
-    this.id,
     this.title,
+    this.datetime,
     this.year,
     this.month,
-    this.day,
-    this.time,
-    this.code,
     this.place,
     this.memo
   });
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'title': title,
+      'dateTime': datetime,
       'year': year,
       'month': month,
-      'day': day,
-      'time': time,
-      'code': code,
       'place': place,
       'memo': memo
     };

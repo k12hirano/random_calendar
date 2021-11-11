@@ -3,9 +3,7 @@ class Event {
   String title;
   int mode;
   int count;
-  int year;
-  int month;
-  int code;
+  DateTime datetime;
   String enrollment;
 
   Event({
@@ -13,9 +11,7 @@ class Event {
     this.title,
     this.mode,
     this.count,
-    this.year,
-    this.month,
-    this.code,
+    this.datetime,
     this.enrollment
 });
 
@@ -25,8 +21,7 @@ class Event {
       'title': title,
       'mode': mode,
       'count': count,
-      'year': year,
-      'code': code,
+      'dateTime': datetime,
       'enrollment': enrollment
     };
   }
