@@ -22,10 +22,12 @@ class _RootState extends State<Root> {
   List<Plan> _plans = [];
   final ScrollController _scrollController = ScrollController();
   DateRangePickerController controller = DateRangePickerController();
-
+  DateTime _selectedDay;
+  DateTime _focusedDay;
 
   @override
   void initState() {
+    _selectedDay = _focusedDay;
     load();
     super.initState();
   }
@@ -61,8 +63,7 @@ class _RootState extends State<Root> {
     final width = MediaQuery.of(context).size.width;
     final adjustsizeh = MediaQuery.of(context).size.height * 0.0011;
 
-    DateTime _selectedDay;
-    DateTime _focusedDay;
+
     int currentMonth;
     int getHashCode(DateTime key) {
       return key.day * 1000000 + key.month * 10000 + key.year;
@@ -194,11 +195,12 @@ class _RootState extends State<Root> {
                         return isSameDay(_selectedDay, day);
                       },
                       onDaySelected: (selectedDay, focusedDay) {
+                        if(!isSameDay(_selectedDay, selectedDay)){
                         setState(() {
                           _selectedDay = selectedDay;
-                          //_focusedDay = focusedDay;
+                          _focusedDay = focusedDay;
                         });
-                      },
+                      }},
                       onDayLongPressed: (selectedDay, focusedDay){
                         setState(() {
 
@@ -212,13 +214,14 @@ class _RootState extends State<Root> {
 
                     )),
                 Container(
-                    height: height*0.3,
-                    child: ListView.builder(
-                    itemCount: 1,
-                    itemBuilder: (context, index){
-                    return InkWell(onTap: (){},
-                    child: Container(child: Text('a')));
-                }))
+                    height: height*0.1,
+                    child: ListView(
+                      children: _getEventForDay(_selectedDay).map((event) =>
+                          ListTile(
+                        title:
+                        Text(event.title.toString()),
+                      )).toList(),
+                    ))
               ],
             ),
           )

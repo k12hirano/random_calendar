@@ -13,7 +13,8 @@ class DB {
   final String _title = 'title';
   final String _mode = 'mode';
   final String _count = 'count';
-  final String _datetime = 'datetime';
+  final String _year = 'year';
+  final String _month = 'month';
   final String _enrollment = 'enrollment';
 
   final String plantable = 'plan';
@@ -46,7 +47,7 @@ class DB {
     );
   }
   Future<void> createTable(Database db, int version) async {
-    await db.execute('CREATE TABLE event(id INTEGER AUTO INCREMENT ,title TEXT, mode INTEGER, count INTEGER, datetime TEXT PRIMARY KEY, enrollment TEXT)');
+    await db.execute('CREATE TABLE event(id INTEGER AUTO INCREMENT ,title TEXT, mode INTEGER, count INTEGER, year INTEGER, month INTEGER, enrollment TEXT PRIMARY KEY)');
     await db.execute('CREATE TABLE plan(title TEXT, datetime TEXT PRIMARY KEY, place TEXT, memo TEXT)');
     await db.execute('CREATE TABLE space(datetime TEXT PRIMARY KEY, mode INTEGER, count INTEGER)');
   }
@@ -57,7 +58,7 @@ class DB {
     database1 = await initdb();}
     var maps = await db.query(
       eventtable,
-      orderBy: '$_datetime DESC',
+      orderBy: '$_enrollment DESC',
     );
     if (maps.isEmpty) return [];
     return maps.map((map) => fromMap(map)).toList();
@@ -103,7 +104,7 @@ class DB {
   Future<List<Event>> select(DateTime datetime) async{
     final db = await database;
     var maps = await db.query(eventtable,
-        where: '$_datetime = ?',
+        where: '$_enrollment = ?',
         whereArgs: [datetime]);
     if(maps.isEmpty) return [];
     return maps.map((map)=> fromMap(map)).toList();
@@ -114,7 +115,7 @@ class DB {
 
     var maps = (keyword != null)?await db.query(
       eventtable,
-      orderBy: '$_datetime DESC',
+      orderBy: '$_enrollment DESC',
       where: '$_title LIKE ?',
          // +'OR $_email LIKE ?'
          // +'OR $_pass LIKE ?'
@@ -124,7 +125,7 @@ class DB {
     )
         :await db.query(
       eventtable,
-      orderBy: '$_datetime DESC',
+      orderBy: '$_enrollment DESC',
     );
 
     if (maps.isEmpty) {
@@ -210,7 +211,8 @@ class DB {
       _title: event.title,
       _mode: event.mode,
       _count: event.count,
-      _datetime: event.datetime.toUtc().toIso8601String(),
+      _year: event.year,
+      _month: event.month,
       _enrollment: event.enrollment
     };
   }
@@ -221,7 +223,8 @@ class DB {
         title: json[_title],
         mode: json[_mode],
         count: json[_count],
-        datetime: DateTime.parse(json[_datetime]).toLocal(),
+        year: json[_year],
+        month: json[_month],
         enrollment: json[_enrollment],
     );
   }

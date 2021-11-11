@@ -45,9 +45,10 @@ class _PopupState extends State<Popup> {
     await DB().insert(
       Event(
         title: todotext.text,
-        mode: null,
-        count: null,
-        datetime: null,
+        mode: 1,
+        count: 1,
+        year: 2021,
+        month: 11,
         enrollment: DateTime.now().toString()
       )
     );
@@ -59,7 +60,8 @@ class _PopupState extends State<Popup> {
         title: todotext1.text,
         mode: mode,
         count: count,
-        datetime: null,
+        year: 2021,
+        month: 11,
         enrollment: DateTime.now().toString()
       ), id
     );
@@ -319,6 +321,10 @@ class _PopupState extends State<Popup> {
                                                 ),
                                                 onPressed: () {
                                                   insert();
+                                                  setState(() {
+                                                    eventsLoad();
+                                                    Navigator.pop(context);
+                                                  });
                                                 })),
                                         Container(
                                             height: height*0.06,
@@ -344,6 +350,8 @@ class _PopupState extends State<Popup> {
     Widget todoLists(){
       return ListView.builder(itemBuilder: (context, index){
         return Slidable(
+            actionExtentRatio: 0.2,
+            actionPane: SlidableScrollActionPane(),
             secondaryActions: [
               IconSlideAction(
                 caption: '削除',
@@ -373,7 +381,7 @@ class _PopupState extends State<Popup> {
                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children: <Widget>[
                                     Container(
-                                        height: height*0.15,
+                                        height: height*0.3,
                                         child: TextFormField(decoration: InputDecoration(
                                             isDense: true,
                                             hintText: 'やってみたいこと入力してください'),
@@ -481,7 +489,8 @@ class _PopupState extends State<Popup> {
                                                         primary: Colors.lightGreen,
                                                       ),
                                                       onPressed: () {
-                                                        update(_eventLists[index].id, null, null);
+                                                        update(_eventLists[index].id, 2021, 11);
+                                                        Navigator.pop(context);
                                                       })),
                                               Container(
                                                   height: height*0.17,
@@ -502,7 +511,13 @@ class _PopupState extends State<Popup> {
                     );
                   });
             },
-            child: Container(child: Text(_eventLists[index])))
+            child: Container(
+                decoration: BoxDecoration(border: Border.all(color: Colors.green)),
+                height: height*0.08,
+                padding: EdgeInsets.fromLTRB(10, 20, 0, 20),
+                //margin: EdgeInsets.all(10),
+                alignment: Alignment.centerLeft,
+                child: Text(_eventLists[index].title, style: TextStyle(fontSize: 20),)))
         );
       },
       itemCount: _eventLists.length);
