@@ -201,39 +201,41 @@ class _PopupState extends State<Popup> {
                     contentPadding: EdgeInsets.all(0.0),
                     titlePadding: EdgeInsets.all(0.0),
                     title: Container(
-                      height: height*0.65,
+                      height: height*0.5,
+                      width: width*0.75,
                       child: Scaffold(
                         body: Container(
                             child: Column(
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: <Widget>[
                               Container(
-                                  height: height*0.15,
+                                  height: height*0.05,
+                                  width: width*0.75*0.8,
                                   child: TextFormField(decoration: InputDecoration(
                                       isDense: true,
                                       hintText: 'やってみたいこと入力してください'),
                                       controller: todotext,
                                       style: TextStyle(
-                                          fontSize: 15*adjustsizeh,
+                                          fontSize: 20*adjustsizeh,
                                           height: 2.0,
                                           color: Colors.brown
                                       )
                                   )),
                               Container(
-                                  height: height*0.15,
+                                  height: height*0.1,
                                   child: Column(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       crossAxisAlignment: CrossAxisAlignment.center,
                                       children: <Widget>[
                                     Text('規模選択'),
                                     Container(
-                                        height: height*0.1,
+                                        height: height*0.07,
                                         child:Row(
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             children: <Widget>[
                                           Container(
-                                              height: height*0.1,
-                                              width: width*0.23,
+                                              height: height*0.07,
+                                              width: width*0.2,
                                               child: Row(
                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                   children: <Widget>[
@@ -243,8 +245,8 @@ class _PopupState extends State<Popup> {
                                                 Text('半日')
                                               ])),
                                           Container(
-                                              height: height*0.1,
-                                              width: width*0.23,
+                                              height: height*0.07,
+                                              width: width*0.2,
                                               child: Row(
                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                   children: <Widget>[
@@ -254,27 +256,27 @@ class _PopupState extends State<Popup> {
                                                 Text('一日')
                                               ])),
                                           Container(
-                                              height: height*0.1,
-                                              width: width*0.23,
+                                              height: height*0.07,
+                                              width: width*0.2,
                                               child: Row(
                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                   children: <Widget>[
                                                 Checkbox(value: tan, onChanged: (value){
                                                   tan=value;
                                                 }),
-                                                Text('短時間')
+                                                Text('時間')
                                               ]))
                                         ]))
                                   ])),
                               Container(
-                                  height: height*0.15,
+                                  height: height*0.1,
                                   child: Column(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       crossAxisAlignment: CrossAxisAlignment.center,
                                       children: <Widget>[
                                     Text('回数選択'),
                                     Container(
-                                        height: height*0.1,
+                                        height: height*0.05,
                                         child:Row(
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             children: <Widget>[
@@ -288,7 +290,7 @@ class _PopupState extends State<Popup> {
                                                 Text('１回のみ')
                                               ])),
                                           Container(
-                                              height: height*0.1,
+                                              height: height*0.05,
                                               width: width*0.28,
                                               child: Row(
                                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -302,13 +304,13 @@ class _PopupState extends State<Popup> {
                                         ]))
                                   ])),
                               Container(
-                                  height: height*0.2,
+                                  height: height*0.06,
                                   child:Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                       crossAxisAlignment: CrossAxisAlignment.center,
                                       children: <Widget>[
                                         Container(
-                                            height: height*0.17,
+                                            height: height*0.06,
                                             width: width*0.28,
                                             child:ElevatedButton(
                                                 child: Text('登録', style: TextStyle(color: Colors.yellow[200],fontSize: 15)),
@@ -319,7 +321,7 @@ class _PopupState extends State<Popup> {
                                                   insert();
                                                 })),
                                         Container(
-                                            height: height*0.17,
+                                            height: height*0.06,
                                             width: width*0.28,
                                             child: ElevatedButton(
                                                 child: Text('キャンセル',  style: TextStyle(color: Colors.yellow[200], fontSize: 15)),
