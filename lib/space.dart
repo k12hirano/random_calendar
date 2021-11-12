@@ -11,7 +11,7 @@ class Space {
 
   Map<String, dynamic> toMap() {
     return {
-      'dateTime': datetime,
+      'dateTime': datetime.toUtc().toIso8601String(),
       'mode': mode,
       'count': count
     };

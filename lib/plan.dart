@@ -18,7 +18,7 @@ class Plan {
   Map<String, dynamic> toMap() {
     return {
       'title': title,
-      'dateTime': datetime,
+      'dateTime': datetime.toUtc().toIso8601String(),
       'year': year,
       'month': month,
       'place': place,

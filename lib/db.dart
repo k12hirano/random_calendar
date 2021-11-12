@@ -229,7 +229,7 @@ class DB {
     );
   }
 
-  Map<String, dynamic> toMapPlan(Plan plan) {
+  Map<String, dynamic> toMapPlan(Plan plan) { print(plan.datetime.toUtc().toIso8601String());
     return {
       __title: plan.title,
       __datetime: plan.datetime.toUtc().toIso8601String(),
@@ -238,6 +238,7 @@ class DB {
       __place: plan.place,
       __memo: plan.memo
     };
+
   }
 
   Plan fromMapPlan(Map<String, dynamic> json) {
@@ -251,7 +252,7 @@ class DB {
     );
   }
 
-  Map<String, dynamic> toMapSpace(Space space) {
+  Map<String, dynamic> toMapSpace(Space space) {print(space.datetime.toUtc().toIso8601String());
     return {
      ___datetime: space.datetime.toUtc().toIso8601String(),
       ___mode: space.mode,
