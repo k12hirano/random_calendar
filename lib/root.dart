@@ -31,6 +31,7 @@ class _RootState extends State<Root> {
   DateTime _focusedDay;
   List<DateTime> _dateList = [];
   var _days = [];
+  var _dates = [];
   bool han = false;
   bool ichi = false;
   bool tan = false;
@@ -114,6 +115,11 @@ class _RootState extends State<Root> {
         _days = args.value;
       });
     }
+    void _onSelectionChanged1(DateRangePickerSelectionChangedArgs args) {
+      setState(() {
+        _dates = args.value;
+      });
+    }
 
     Future<void> _pickedDates(BuildContext context, DateRangePickerController controller) async {
       _days = [];
@@ -168,6 +174,7 @@ class _RootState extends State<Root> {
           });}
 
     Future<void> _pickedDates1(BuildContext context, DateRangePickerController controller, DateTime selectedDay) async {
+      _dates = [];
       await showDialog(
           context: context,
           builder: (_) {
@@ -191,19 +198,22 @@ class _RootState extends State<Root> {
                       navigationMode: DateRangePickerNavigationMode.snap,
                       // スクロール量、止まる位置 snapは月毎にぴったり止まって切り替わる
                       showNavigationArrow: true,
+                      onSelectionChanged: _onSelectionChanged1,
                       onViewChanged: (DateRangePickerViewChangedArgs args) {
                         var visibleDates = args.visibleDateRange;
                       },
                       showActionButtons: true,
                       onSubmit: (Object value) {
+                        _dates.sort((a, b) => a.compareTo(b));
                          setState(() {
-                           _inputdate = value;
+                           //_inputdate = value;
                          });
 
                         Navigator.pop(context);
                         load();
                       },
                       onCancel: () {
+                        _dates=[];
                         Navigator.pop(context);
                       },
                     ),
@@ -222,6 +232,7 @@ class _RootState extends State<Root> {
       List _getEventForDay(DateTime day) {
         print('getevent');
         print(day);
+        print(_events[day]);
         return _events[day] ?? [];
       }
 
@@ -236,15 +247,21 @@ class _RootState extends State<Root> {
           );
         });
         if(_plantime != null){
-          setState(() {
+          //setState(() {
             _initial = _plantime;
-          });
+          //});
         }
       }
 
 
       Future<void> dialogOn(DateTime selectedDay) async {
+        print('?_dates');
+        print(_dates);
+            _initial = TimeOfDay(hour: 0, minute: 0);
             _inputdate = selectedDay;
+            han=false;
+            ichi=false;
+            tan=false;
             String weekday;
             if(selectedDay.weekday==1){weekday='(月)';}
             else if(selectedDay.weekday==2){weekday='(火)';}
@@ -291,7 +308,11 @@ class _RootState extends State<Root> {
                                       mainAxisAlignment: MainAxisAlignment
                                           .spaceEvenly,
                                       children: <Widget>[
-                                        GestureDetector(
+                                        Container(
+                                          height: height*0.15,
+                                          width: width*0.5,
+                                          alignment: Alignment.center,
+                                          child: (_dates.length==0)?GestureDetector(
                                             onTap: () {
                                               _pickedDates1(
                                                   context, forcalendar,
@@ -310,7 +331,53 @@ class _RootState extends State<Root> {
                                                         + '/' + weekday,
                                                     style: TextStyle(
                                                         fontSize: 18 *
-                                                            adjustsizeh)))),
+                                                            adjustsizeh))
+                                                      )) :(_dates.length==1)?GestureDetector(
+                                              onTap: () {
+                                                _pickedDates1(
+                                                    context, forcalendar,
+                                                    selectedDay);
+                                              },
+                                              child: Container(
+                                                  height: height * 0.07,
+                                                  alignment: Alignment.center,
+                                                  child: Text(
+                                                      _dates[1].year.toString() +
+                                                          '/'
+                                                          + _dates[1].month
+                                                          .toString()
+                                                          + '/' + _dates[1].day
+                                                          .toString()
+                                                          + '/' + weekday,
+                                                      style: TextStyle(
+                                                          fontSize: 18 *
+                                                              adjustsizeh))
+                                              ))
+                                                        :ListView.builder(
+                                                           itemBuilder: (context, index){
+                                                              return GestureDetector(
+                                                                  onTap: () {
+                                                                    _pickedDates1(
+                                                                        context, forcalendar,
+                                                                        selectedDay);
+                                                                  },
+                                                                  child: Container(
+                                                                      height: height * 0.07,
+                                                                      alignment: Alignment.center,
+                                                                      child: Text(
+                                                                          _dates[index].year.toString() +
+                                                                              '/'
+                                                                              + _dates[index].month
+                                                                              .toString()
+                                                                              + '/' + _dates[index].day
+                                                                              .toString()
+                                                                              + '/' + weekday,
+                                                                          style: TextStyle(
+                                                                              fontSize: 18 *
+                                                                                  adjustsizeh))
+
+                                                                  ));
+                                                        })),
                                         /*Container(
                                         height: height*0.07,
                                         child:DateTimePicker(
@@ -328,12 +395,12 @@ class _RootState extends State<Root> {
                                     )),*/
                                         GestureDetector(
                                           onTap: () {
-                                            _selectTime(context);
+                                            _selectTime(context).then((value) => setState(() {}));
                                           },
                                           child: Container(
                                               alignment: Alignment.center,
                                               child: Text(
-                                                  _initial.toString() + '～',
+                                                  '${_initial.format(context)}～',
                                                   style: TextStyle(
                                                       fontSize: 18 *
                                                           adjustsizeh))),
@@ -453,6 +520,7 @@ class _RootState extends State<Root> {
                                                       memo: 'sapmle'));
                                                   print(selectedDay);
                                                   setState(() {
+                                                    plantext.clear();
                                                     memotext.clear();
                                                     load();
                                                     Navigator.pop(context);
@@ -471,6 +539,8 @@ class _RootState extends State<Root> {
                                                   primary: Colors.lightGreen,
                                                 ),
                                                 onPressed: () {
+                                                  plantext.clear();
+                                                  memotext.clear();
                                                   Navigator.pop(context);
                                                 }))
                                       ]
@@ -561,7 +631,9 @@ class _RootState extends State<Root> {
                         setState(() {
                           _selectedDay = selectedDay;
                           _focusedDay = focusedDay;
+                          print('onday');
                           print(selectedDay);
+                          print('onday2');
                           print(_selectedDay);
                         });
                       }},
