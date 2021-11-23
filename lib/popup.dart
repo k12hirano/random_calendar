@@ -14,7 +14,7 @@ class Popup extends StatefulWidget {
 }
 
 class _PopupState extends State<Popup> {
-  List _eventLists =[];
+  List _todoLists =[];
   var todotext = TextEditingController();
   var todotext1 = TextEditingController();
   bool han= false;
@@ -26,11 +26,20 @@ class _PopupState extends State<Popup> {
   @override
   void initState() {
     eventsLoad();
+    print('init');
     super.initState();
   }
 
+  _PopupState(){
+    eventsLoad();
+    print('popup');
+  }
+
   Future<void> eventsLoad() async {
-    _eventLists = await DB().getEvents();
+    _todoLists = await DB().getEvents();
+    setState(() {
+      print('load');
+    });
   }
 
 
@@ -242,7 +251,9 @@ class _PopupState extends State<Popup> {
                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                   children: <Widget>[
                                                 Checkbox(value: han, onChanged: (value){
-                                                  han=value;
+                                                  setState(() {
+                                                    han=value;
+                                                  });
                                                 }),
                                                 Text('半日')
                                               ])),
@@ -253,7 +264,9 @@ class _PopupState extends State<Popup> {
                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                   children: <Widget>[
                                                 Checkbox(value: ichi, onChanged: (value){
-                                                  ichi=value;
+                                                  setState(() {
+                                                    ichi=value;
+                                                  });
                                                 }),
                                                 Text('一日')
                                               ])),
@@ -264,7 +277,9 @@ class _PopupState extends State<Popup> {
                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                   children: <Widget>[
                                                 Checkbox(value: tan, onChanged: (value){
-                                                  tan=value;
+                                                  setState(() {
+                                                    tan=value;
+                                                  });
                                                 }),
                                                 Text('時間')
                                               ]))
@@ -287,7 +302,9 @@ class _PopupState extends State<Popup> {
                                               width: width*0.28,
                                               child: Row(children: <Widget>[
                                                 Checkbox(value: one, onChanged: (value){
-                                                  one=value;
+                                                  setState(() {
+                                                    one=value;
+                                                  });
                                                 }),
                                                 Text('１回のみ')
                                               ])),
@@ -298,7 +315,9 @@ class _PopupState extends State<Popup> {
                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                   children: <Widget>[
                                                 Checkbox(value: multi, onChanged: (value){
-                                                  multi=value;
+                                                  setState(() {
+                                                    multi=value;
+                                                  });
                                                 }),
                                                 Text('複数回')
                                               ])),
@@ -322,8 +341,9 @@ class _PopupState extends State<Popup> {
                                                 onPressed: () {
                                                   insert();
                                                   setState(() {
-                                                    eventsLoad();
+                                                    todotext.clear();
                                                     Navigator.pop(context);
+                                                    eventsLoad();
                                                   });
                                                 })),
                                         Container(
@@ -358,7 +378,7 @@ class _PopupState extends State<Popup> {
                 color: Colors.green[900],
                 icon: Icons.remove,
                 onTap: () {
-                  remove(_eventLists[index].id);
+                  remove(_todoLists[index].id);
                   setState(() {
                     eventsLoad();
                   });
@@ -367,9 +387,12 @@ class _PopupState extends State<Popup> {
             ],
           child:InkWell(
             onTap: () async {
+              todotext1 = TextEditingController(text: _todoLists[index].title);
               var result =  await showDialog(
                   context: context,
                   builder: (_) {
+                    return StatefulBuilder(
+                        builder: (context, setState) {
                     return SimpleDialog(
                       contentPadding: EdgeInsets.all(0.0),
                       titlePadding: EdgeInsets.all(0.0),
@@ -387,7 +410,7 @@ class _PopupState extends State<Popup> {
                                         child: TextFormField(decoration: InputDecoration(
                                             isDense: true,
                                             hintText: 'やってみたいこと入力してください'),
-                                            controller: todotext,
+                                            controller: todotext1,
                                             style: TextStyle(
                                                 fontSize: 20*adjustsizeh,
                                                 height: 2.0,
@@ -491,8 +514,9 @@ class _PopupState extends State<Popup> {
                                                         primary: Colors.lightGreen,
                                                       ),
                                                       onPressed: () {
-                                                        update(_eventLists[index].id, 2021, 11);
+                                                        update(_todoLists[index].id, 2021, 11);
                                                         setState(() {
+                                                          todotext1.clear();
                                                           eventsLoad();
                                                           Navigator.pop(context);
                                                         });
@@ -515,6 +539,7 @@ class _PopupState extends State<Popup> {
                       ),
                     );
                   });
+                  });
             },
             child: Container(
                 decoration: BoxDecoration(border: Border.all(color: Colors.green)),
@@ -522,10 +547,10 @@ class _PopupState extends State<Popup> {
                 padding: EdgeInsets.fromLTRB(10, 20, 0, 20),
                 //margin: EdgeInsets.all(10),
                 alignment: Alignment.centerLeft,
-                child: Text(_eventLists[index].title, style: TextStyle(fontSize: 20),)))
+                child: Text(_todoLists[index].title, style: TextStyle(fontSize: 20),)))
         );
       },
-      itemCount: _eventLists.length);
+      itemCount: _todoLists.length);
     }
 
 

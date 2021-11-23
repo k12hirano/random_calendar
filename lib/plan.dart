@@ -3,7 +3,7 @@ class Plan {
   DateTime datetime;
   int year;
   int month;
-  int place;
+  String place;
   String memo;
 
   Plan({
