@@ -37,6 +37,8 @@ class _RootState extends State<Root> {
   bool tan = false;
   var _initial = TimeOfDay(hour: 0, minute: 0);
   DateTime _inputdate;
+  List _planlist = [];
+  List<dynamic> _projects = [];
 
   @override
   void initState() {
@@ -47,7 +49,7 @@ class _RootState extends State<Root> {
   }
 
   _RootState(){
-    load();
+    //load();
     print('LOAD');
   }
 
@@ -61,30 +63,55 @@ class _RootState extends State<Root> {
   }
 
   Future<void> load() async {
-    _plans = await DB().getPlans();
+    _projects = await DB().getPlan();
+    setState(() {
+      for(var i=0;i<_projects.length;i++){
+        var kari = _projects[i];
+        _eventList[kari[0].datetime] = kari;
+      }
+
+    });
+
+   /* _plans = await DB().getPlans();
     setState(() {
       List<dynamic> kari = [];
+      _eventList.clear();
       for(var i=0;i<_plans.length;i++) {
         if(i+1<_plans.length){
-          if (_plans[i].datetime == _plans[i+1].datetime) {
+          if (_plans[i].datetime.year == _plans[i+1].datetime.year &&
+              _plans[i].datetime.month == _plans[i+1].datetime.month &&
+              _plans[i].datetime.day == _plans[i+1].datetime.day) {
             kari.add(_plans[i]);
+            print(_plans[i].title);
           } else {
             kari.add(_plans[i]);
+            print(_plans[i].title);
             _eventList[_plans[i].datetime] = kari;
+            print('1');
+            print(_plans[i].datetime.toString());
+            print(_eventList);
             kari.removeRange(0, kari.length);
           }
         } else {
+          print(kari);
           kari.add(_plans[i]);
-          _eventList[_plans[i].datetime] = kari;
+          print(_plans[i].title);
+          print(_plans[i].datetime.toString());
+          print(kari);
+          print(_eventList);
+          print(DateTime(_plans[i].datetime.year, _plans[i].datetime.month, _plans[i].datetime.day));
+          _eventList[DateTime(_plans[i].datetime.year, _plans[i].datetime.month, _plans[i].datetime.day)] = kari;
+          print('2');
+          print(_eventList);
         }
       }
     });
-    print('events');
-    print(_eventList);
-    print(_eventList[DateTime.now().add(Duration(days: 4))]);
-    print(_eventList[DateTime.now().add(Duration(days: 2))]);
-    print(_eventList[DateTime.now()]);
-
+    //_eventList.clear();
+    //_eventList={DateTime(2021,11,24): [Plan(id:1, title:'A', datetime:DateTime(2021,11,24),year:2021, month:11,place:'lplp',memo:'heke'),
+    //  Plan(id:1, title:'B', datetime:DateTime(2021,11,24),year:2021, month:11,place:'lplp',memo:'heke')],
+    //  DateTime(2021,11,26):[Plan(id:3, title:'C', datetime:DateTime(2021,11,24),year:2021, month:11,place:'lplp',memo:'heke')]};
+    print('koko');
+    print(_eventList);*/
   }
 
   Future<void> setPlan(Plan plan) async {
@@ -230,9 +257,11 @@ class _RootState extends State<Root> {
         ..addAll(_eventList);
 
       List _getEventForDay(DateTime day) {
-        print('getevent');
-        print(day);
-        print(_events[day]);
+        //print(_events[day]);
+        return _events[day] ?? [];
+      }
+
+      List _eventGet(DateTime day) {
         return _events[day] ?? [];
       }
 
@@ -603,16 +632,16 @@ class _RootState extends State<Root> {
           floatingActionButton: floatingButton(),
           body: Center(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Container(
-                    height: height * 0.8,
+                    height: height * 0.6,
                     //height: 400,
                     //width: ,
                     child: TableCalendar(
                       focusedDay: DateTime.now(),
-                      firstDay: DateTime.utc(2020, 1, 1),
-                      lastDay: DateTime.utc(2030, 12, 31),
+                      firstDay: DateTime.utc(2021, 1, 1),
+                      lastDay: DateTime.utc(2022, 12, 31),
                       locale: 'ja_JP',
                       calendarFormat: CalendarFormat.month,
                       //calendarStyle: CalendarStyle(),
@@ -631,11 +660,14 @@ class _RootState extends State<Root> {
                         setState(() {
                           _selectedDay = selectedDay;
                           _focusedDay = focusedDay;
-                          print('onday');
-                          print(selectedDay);
-                          print('onday2');
-                          print(_selectedDay);
+                          print('_getevent');
+                          print(_getEventForDay(selectedDay));
+                          _planlist=[];
+                          print('getevent'+selectedDay.toString());
+                          _planlist = _eventGet(selectedDay);
+                          print(_planlist);
                         });
+                        _getEventForDay(selectedDay);
                       }},
                       onDayLongPressed: (selectedDay, focusedDay){
                         setState(() {
@@ -653,12 +685,40 @@ class _RootState extends State<Root> {
                     //child:
                     ListView(
                       shrinkWrap: true,
-                      children: _getEventForDay(_selectedDay).map((event) =>
-                          ListTile(
-                        title:
-                        Text(event.title.toString()),
-                      )).toList(),
+                      children: _getEventForDay(_selectedDay).map((plan) =>
+                          InkWell(
+                            onTap: (){
+                             /* DB().deletePlan(plan.id);
+                              print('remove'+_selectedDay.toString());
+                              _eventList = {};
+                              _events.clear();*/
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: Colors.green[900])),
+                             child: Row(
+                                 mainAxisAlignment: MainAxisAlignment.start,
+                                 children: <Widget>[
+                                   SizedBox(width: width*0.05),
+                                   Text(plan.time.toString()),
+                                   SizedBox(width: width*0.1),
+                                   Text(plan.title.toString(), style: TextStyle(fontSize: 18)),
+                                 ]),
+                      ))).toList(),
                     )
+                    /*Container(
+                        height: height*0.15,
+                        child:ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: _plans.length,
+                      itemBuilder: (context, index){
+                        return InkWell(onTap: (){},
+                        child: Container(
+                            height: height*0.05,
+                            child: Text(_plans[index].title)));
+                      },
+                    ))*/
                 //)
               ],
             ),

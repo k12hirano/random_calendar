@@ -18,13 +18,16 @@ class DB {
   final String _enrollment = 'enrollment';
 
   final String plantable = 'plan';
+  final String __id = 'id';
   final String __title = 'title';
   final String __datetime = 'datetime';
   final String __year = 'year';
   final String __month = 'month';
+  final String __time = 'time';
   final String __place = 'place';
   final String __memo = 'memo';
 
+  final String ___id = 'id';
   final String spacetable = 'space';
   final String ___datetime = 'datetime';
   final String ___mode = 'mode';
@@ -48,8 +51,9 @@ class DB {
   }
   Future<void> createTable(Database db, int version) async {
     await db.execute('CREATE TABLE event(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, mode INTEGER, count INTEGER, year INTEGER, month INTEGER, enrollment TEXT)');
-    await db.execute('CREATE TABLE plan(title TEXT, datetime TEXT PRIMARY KEY, year INTEGER, month INTEGER, place TEXT, memo TEXT)');
-    await db.execute('CREATE TABLE space(datetime TEXT PRIMARY KEY, mode INTEGER, count INTEGER)');
+    await db.execute('CREATE TABLE plan(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, datetime TEXT, year INTEGER, month INTEGER, time INTEGER, place TEXT, memo TEXT)');
+    await db.execute('CREATE TABLE space(id INTEGER PRIMARY KEY AUTOINCREMENT, datetime TEXT, mode INTEGER, count INTEGER)');
+    // await db.execute('CREATE TABLE link()'); 予定複数日程選択の時の紐付けよう、予定用データベース、idで紐付けして他日程を取得、登録は日程と予定に一対一で紐付け
   }
 
   Future<List<Event>> getEvents() async {
@@ -69,10 +73,37 @@ class DB {
       database1 = await initdb();}
     var maps = await db.query(
       plantable,
-      orderBy: '$__datetime DESC',
+      orderBy: '$__datetime ASC',
     );
     if (maps.isEmpty) return [];
     return maps.map((map) => fromMapPlan(map)).toList();
+  }
+  Future<List<Plan>> getDayPlan(String year, String month, String day) async {
+    final db=await database;
+    if(database1 ==null) {
+      database1 =await initdb();}
+    var maps = await db.query(
+      plantable,
+      orderBy: '$__datetime ASC',
+      where: '$__datetime LIKE ?',
+      whereArgs: ['${year+'-'+month+'-'+day}%']
+    );
+    if(maps.isEmpty) return [];
+    return maps.map((map) => fromMapPlan(map)).toList();
+  }
+
+  Future<List<List<Plan>>> getPlan() async {
+    List<List<Plan>> _plan=[];
+    for(var i=2021;i<2023;i++){
+      for(var t=1;t<13;t++){
+        for(var u=1;u<32;u++){
+          var kari =  await getDayPlan(i.toString(), t.toString(), u.toString());
+          if(kari.length>0){
+          _plan.add(kari);}
+        }
+      }
+    }
+    return _plan;
   }
   Future<List<Plan>> getPlansMonth(int year, int month) async {
     final db = await database;
@@ -160,23 +191,23 @@ class DB {
     );
   }
 
-  Future updatePlan(Plan plan, DateTime datetime) async {
+  Future updatePlan(Plan plan, int id) async {
     final db = await database;
     return await db.update(
       plantable,
       toMapPlan(plan),
-      where: '$__datetime = ?',
-      whereArgs: [datetime],
+      where: '$__id = ?',
+      whereArgs: [id],
     );
   }
 
-  Future updateSpace(Space space, DateTime datetime) async {
+  Future updateSpace(Space space, int id) async {
     final db = await database;
     return await db.update(
       spacetable,
       toMapSpace(space),
-      where: '$___datetime = ?',
-      whereArgs: [datetime],
+      where: '$___id = ?',
+      whereArgs: [id],
     );
   }
 
@@ -188,20 +219,20 @@ class DB {
       whereArgs: [id],
     );
   }
-  Future deletePlan(DateTime datetime) async {
+  Future deletePlan(int id) async {
     final db = await database;
     return await db.delete(
       plantable,
-      where: '$__datetime = ?',
-      whereArgs: [datetime],
+      where: '$__id = ?',
+      whereArgs: [id],
     );
   }
-  Future deleteSpace(DateTime datetime) async {
+  Future deleteSpace(int id) async {
     final db = await database;
     return await db.delete(
       spacetable,
-      where: '$___datetime = ?',
-      whereArgs: [datetime],
+      where: '$___id = ?',
+      whereArgs: [id],
     );
   }
 
@@ -231,10 +262,12 @@ class DB {
 
   Map<String, dynamic> toMapPlan(Plan plan) { print(plan.datetime.toUtc().toIso8601String());
     return {
+      __id: plan.id,
       __title: plan.title,
       __datetime: plan.datetime.toUtc().toIso8601String(),
       __year: plan.year,
       __month: plan.month,
+      __time: plan.time,
       __place: plan.place,
       __memo: plan.memo
     };
@@ -243,10 +276,12 @@ class DB {
 
   Plan fromMapPlan(Map<String, dynamic> json) {
     return Plan(
+      id: json[__id],
       title: json[__title],
       datetime: DateTime.parse(json[__datetime]).toLocal(),
       year: json[__year],
       month: json[__month],
+      time: json[__time],
       place: json[__place],
       memo: json[__memo],
     );
@@ -254,6 +289,7 @@ class DB {
 
   Map<String, dynamic> toMapSpace(Space space) {print(space.datetime.toUtc().toIso8601String());
     return {
+      ___id: space.id,
      ___datetime: space.datetime.toUtc().toIso8601String(),
       ___mode: space.mode,
       ___count: space.count
@@ -262,6 +298,7 @@ class DB {
 
   Space fromMapSpace(Map<String, dynamic> json) {
     return Space(
+      id: json[___id],
       datetime: DateTime.parse(json[___datetime]).toLocal(),
       mode: json[___mode],
       count: json[___count]
