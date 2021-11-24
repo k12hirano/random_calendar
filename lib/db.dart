@@ -47,7 +47,7 @@ class DB {
     );
   }
   Future<void> createTable(Database db, int version) async {
-    await db.execute('CREATE TABLE event(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, mode INTEGER, count INTEGER, year INTEGER, month INTEGER, enrollment TEXT');
+    await db.execute('CREATE TABLE event(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, mode INTEGER, count INTEGER, year INTEGER, month INTEGER, enrollment TEXT)');
     await db.execute('CREATE TABLE plan(title TEXT, datetime TEXT PRIMARY KEY, year INTEGER, month INTEGER, place TEXT, memo TEXT)');
     await db.execute('CREATE TABLE space(datetime TEXT PRIMARY KEY, mode INTEGER, count INTEGER)');
   }
