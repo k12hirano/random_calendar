@@ -218,7 +218,7 @@ class _PopupState extends State<Popup> {
                       height: height*0.5,
                       width: width*0.75,
                       child: Scaffold(
-                        body: Container(
+                        body: Container(child: SingleChildScrollView(
                             child: Column(
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: <Widget>[
@@ -368,7 +368,7 @@ class _PopupState extends State<Popup> {
                                                 }))]
                                   ))
                             ])
-                        ),
+                        )),
                       ),
                     ),
                   );

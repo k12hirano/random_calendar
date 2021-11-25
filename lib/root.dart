@@ -317,7 +317,7 @@ class _RootState extends State<Root> {
                   //width: width*0.75,
                   width: width * 0.9,
                   child: Scaffold(
-                    body: Container(
+                    body: Container(child: SingleChildScrollView(
                         child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: <Widget>[
@@ -589,7 +589,7 @@ class _RootState extends State<Root> {
                     ),
                   ),
                 ),
-              );
+              ));
             });
             });
       }
@@ -625,7 +625,7 @@ class _RootState extends State<Root> {
                       //width: width*0.75,
                       width: width * 0.9,
                       child: Scaffold(
-                        body: Container(
+                        body: Container(child: SingleChildScrollView(
                             child: Column(
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: <Widget>[
@@ -897,7 +897,7 @@ class _RootState extends State<Root> {
                                       ))
                                 ])
                         ),
-                      ),
+                     )),
                     ),
                   );
                 });
