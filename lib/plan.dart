@@ -1,10 +1,13 @@
+import 'package:flutter/material.dart';
+
 class Plan {
   int id;
   String title;
   DateTime datetime;
   int year;
   int month;
-  int time;
+  int hour;
+  int minute;
   String place;
   String memo;
 
@@ -14,7 +17,8 @@ class Plan {
     this.datetime,
     this.year,
     this.month,
-    this.time,
+    this.hour,
+    this.minute,
     this.place,
     this.memo
   });
@@ -26,7 +30,8 @@ class Plan {
       'dateTime': datetime.toUtc().toIso8601String(),
       'year': year,
       'month': month,
-      'time': time,
+      'hour': hour,
+      'minute': minute,
       'place': place,
       'memo': memo
     };

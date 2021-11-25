@@ -76,6 +76,7 @@ class _PopupState extends State<Popup> {
     );
   }
 
+
   void remove(int id) async {
     DB().delete(id);
   }
@@ -208,6 +209,8 @@ class _PopupState extends State<Popup> {
             var result =  await showDialog(
                 context: context,
                 builder: (_) {
+                  return StatefulBuilder(
+                      builder: (context, setState) {
                   return SimpleDialog(
                     contentPadding: EdgeInsets.all(0.0),
                     titlePadding: EdgeInsets.all(0.0),
@@ -253,6 +256,8 @@ class _PopupState extends State<Popup> {
                                                 Checkbox(value: han, onChanged: (value){
                                                   setState(() {
                                                     han=value;
+                                                    ichi=!value;
+                                                    tan=!value;
                                                   });
                                                 }),
                                                 Text('半日')
@@ -266,6 +271,8 @@ class _PopupState extends State<Popup> {
                                                 Checkbox(value: ichi, onChanged: (value){
                                                   setState(() {
                                                     ichi=value;
+                                                    han=!value;
+                                                    tan=!value;
                                                   });
                                                 }),
                                                 Text('一日')
@@ -279,6 +286,8 @@ class _PopupState extends State<Popup> {
                                                 Checkbox(value: tan, onChanged: (value){
                                                   setState(() {
                                                     tan=value;
+                                                    han=!value;
+                                                    ichi=!value;
                                                   });
                                                 }),
                                                 Text('時間')
@@ -363,6 +372,7 @@ class _PopupState extends State<Popup> {
                       ),
                     ),
                   );
+                 });
                 });
       });
     }
@@ -388,6 +398,11 @@ class _PopupState extends State<Popup> {
           child:InkWell(
             onTap: () async {
               todotext1 = TextEditingController(text: _todoLists[index].title);
+              if(_todoLists[index].mode==0){han=true;ichi=false;tan=false;}
+              else if(_todoLists[index].mode==1){han=false;ichi=true;tan=false;}
+              else if(_todoLists[index].mode==2){han=false;ichi=false;tan=true;}
+              else{han=false;ichi=false;tan=false;}
+
               var result =  await showDialog(
                   context: context,
                   builder: (_) {

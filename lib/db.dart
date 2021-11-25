@@ -23,7 +23,8 @@ class DB {
   final String __datetime = 'datetime';
   final String __year = 'year';
   final String __month = 'month';
-  final String __time = 'time';
+  final String __hour = 'hour';
+  final String __minute = 'minute';
   final String __place = 'place';
   final String __memo = 'memo';
 
@@ -51,7 +52,7 @@ class DB {
   }
   Future<void> createTable(Database db, int version) async {
     await db.execute('CREATE TABLE event(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, mode INTEGER, count INTEGER, year INTEGER, month INTEGER, enrollment TEXT)');
-    await db.execute('CREATE TABLE plan(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, datetime TEXT, year INTEGER, month INTEGER, time INTEGER, place TEXT, memo TEXT)');
+    await db.execute('CREATE TABLE plan(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, datetime TEXT, year INTEGER, month INTEGER, hour INTEGER, minute INTEGER, place TEXT, memo TEXT)');
     await db.execute('CREATE TABLE space(id INTEGER PRIMARY KEY AUTOINCREMENT, datetime TEXT, mode INTEGER, count INTEGER)');
     // await db.execute('CREATE TABLE link()'); 予定複数日程選択の時の紐付けよう、予定用データベース、idで紐付けして他日程を取得、登録は日程と予定に一対一で紐付け
   }
@@ -132,11 +133,11 @@ class DB {
     return maps.map((map) => fromMapSpace(map)).toList();
   }
 
-  Future<List<Event>> select(DateTime datetime) async{
+  Future<List<Event>> select(int id) async{
     final db = await database;
     var maps = await db.query(eventtable,
-        where: '$_enrollment = ?',
-        whereArgs: [datetime]);
+        where: '$_id = ?',
+        whereArgs: [id]);
     if(maps.isEmpty) return [];
     return maps.map((map)=> fromMap(map)).toList();
   }
@@ -267,7 +268,8 @@ class DB {
       __datetime: plan.datetime.toUtc().toIso8601String(),
       __year: plan.year,
       __month: plan.month,
-      __time: plan.time,
+      __hour: plan.hour,
+      __minute: plan.minute,
       __place: plan.place,
       __memo: plan.memo
     };
@@ -281,7 +283,8 @@ class DB {
       datetime: DateTime.parse(json[__datetime]).toLocal(),
       year: json[__year],
       month: json[__month],
-      time: json[__time],
+      hour: json[__hour],
+      minute: json[__minute],
       place: json[__place],
       memo: json[__memo],
     );
