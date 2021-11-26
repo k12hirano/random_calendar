@@ -1,8 +1,8 @@
 import 'dart:collection';
-import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:random_calendar/db.dart';
+import 'package:random_calendar/event.dart';
 import 'package:random_calendar/plan.dart';
 import 'package:random_calendar/popup.dart';
 import 'package:random_calendar/space.dart';
@@ -41,6 +41,7 @@ class _RootState extends State<Root> {
   DateTime _inputdate;
   List _planlist = [];
   List<dynamic> _projects = [];
+  List<Event> _todoList=[];
 
   @override
   void initState() {
@@ -128,6 +129,10 @@ class _RootState extends State<Root> {
     await DB().updatePlan(plan, id);
  }
 
+ Future<void> eventGet() async {
+    _todoList = await DB().getEvents();
+ }
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
@@ -154,6 +159,8 @@ class _RootState extends State<Root> {
 
     Future<void> _pickedDates(BuildContext context, DateRangePickerController controller) async {
       _days = [];
+      //_todoList =
+      eventGet();
       await showDialog(
           context: context,
           builder: (_) {
@@ -183,18 +190,22 @@ class _RootState extends State<Root> {
                       onSelectionChanged: _onSelectionChanged,
                       showActionButtons: true,
                       onSubmit: (Object value) {
-                        if(_days.length>0){
+                        if(_days.length>0&&_todoList.length>=_days.length){
                         _dateList = _days;
+                        _dateList.shuffle();
+                        _todoList.shuffle();
                         for(var i=0;i<_dateList.length;i++){
-                          setSpace(Space(datetime: _dateList[i], mode: 1, count: 1));
+                          //setSpace(Space(datetime: _dateList[i], mode: 1, count: 1));
+                          setPlan(Plan(title: _todoList[i].title, datetime: _dateList[i],year: _dateList[i].hour, month: _dateList[i].minute, hour: 12,minute: 0, place: 'ici', memo: ''));
                         }}else{}
                         print(_dateList);
                         Navigator.pop(context);
-                        load();
+                        load().then((value) => setState(() {}));
                         print(value.toString());
                       },
                       onCancel: () {
                         _days = [];
+                        controller=DateRangePickerController();
                         Navigator.pop(context);
                       },
                     ),
@@ -247,6 +258,7 @@ class _RootState extends State<Root> {
                       },
                       onCancel: () {
                         //_dates=[];
+                        controller=DateRangePickerController();
                         _singleday =[];
                         Navigator.pop(context);
                       },
@@ -313,14 +325,16 @@ class _RootState extends State<Root> {
                 titlePadding: EdgeInsets.all(0.0),
                 title: Container(
                   color: Colors.lightGreen,
-                  height: height * 0.7,
+                  height: height * 0.55,
                   //width: width*0.75,
                   width: width * 0.9,
-                  child: Scaffold(
+
+                   child: Scaffold(
                     body: Container(child: SingleChildScrollView(
                         child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
+                              SizedBox(height:height*0.05),
                               Container(
                                   height: height * 0.05,
                                   width: width * 0.75 * 0.8,
@@ -335,6 +349,7 @@ class _RootState extends State<Root> {
                                           color: Colors.brown
                                       )
                                   )),
+                              SizedBox(height:height*0.05),
                               Container(
                                   height: height * 0.07,
                                   child: Row(
@@ -512,8 +527,9 @@ class _RootState extends State<Root> {
                                                           ]))
                                                 ]))
                                       ])),*/
+                              SizedBox(height:height*0.05),
                               Container(
-                                  height: height * 0.25,
+                                  height: height * 0.15,
                                   width: width * 0.7,
                                   child: TextFormField(
                                       decoration: InputDecoration(
@@ -527,6 +543,7 @@ class _RootState extends State<Root> {
                                           height: 2.0,
                                           color: Colors.black
                                       ))),
+                              SizedBox(height:height*0.05),
                               Container(
                                   height: height * 0.06,
                                   child: Row(
@@ -551,13 +568,14 @@ class _RootState extends State<Root> {
                                                   //処理
                                                   setPlan(Plan(
                                                       title: plantext.text,
-                                                      datetime: _dates[0].dateime,
+                                                      datetime: _dates[0],
                                                       year: 2021,
                                                       month: 11,
                                                       hour: _initial.hour,
                                                       minute: _initial.minute,
                                                       place: 'koko',
                                                       memo: memotext.text));
+                                                  print(_dates[0]);
                                                   print(selectedDay);
                                                   setState(() {
                                                     plantext.clear();
@@ -951,7 +969,7 @@ class _RootState extends State<Root> {
               ]
           ),
           floatingActionButton: floatingButton(),
-          body: Center(
+          body: Center(child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -1067,6 +1085,6 @@ class _RootState extends State<Root> {
               ],
             ),
           )
-      );
+      ));
     }
 }

@@ -215,13 +215,14 @@ class _PopupState extends State<Popup> {
                     contentPadding: EdgeInsets.all(0.0),
                     titlePadding: EdgeInsets.all(0.0),
                     title: Container(
-                      height: height*0.5,
+                      height: height*0.55,
                       width: width*0.75,
                       child: Scaffold(
                         body: Container(child: SingleChildScrollView(
                             child: Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: <Widget>[
+                                  SizedBox(height: height*0.05),
                               Container(
                                   height: height*0.05,
                                   width: width*0.75*0.8,
@@ -235,6 +236,7 @@ class _PopupState extends State<Popup> {
                                           color: Colors.brown
                                       )
                                   )),
+                                  SizedBox(height: height*0.05),
                               Container(
                                   height: height*0.1,
                                   child: Column(
@@ -255,9 +257,12 @@ class _PopupState extends State<Popup> {
                                                   children: <Widget>[
                                                 Checkbox(value: han, onChanged: (value){
                                                   setState(() {
+                                                    if(value){
+                                                      han=value;
+                                                    }else{
                                                     han=value;
                                                     ichi=!value;
-                                                    tan=!value;
+                                                    tan=!value;}
                                                   });
                                                 }),
                                                 Text('半日')
@@ -270,9 +275,12 @@ class _PopupState extends State<Popup> {
                                                   children: <Widget>[
                                                 Checkbox(value: ichi, onChanged: (value){
                                                   setState(() {
+                                                    if(value){
+                                                      ichi=value;
+                                                    }else{
                                                     ichi=value;
                                                     han=!value;
-                                                    tan=!value;
+                                                    tan=!value;}
                                                   });
                                                 }),
                                                 Text('一日')
@@ -285,15 +293,19 @@ class _PopupState extends State<Popup> {
                                                   children: <Widget>[
                                                 Checkbox(value: tan, onChanged: (value){
                                                   setState(() {
+                                                    if(value){
+                                                      tan=value;
+                                                    }else{
                                                     tan=value;
                                                     han=!value;
-                                                    ichi=!value;
+                                                    ichi=!value;}
                                                   });
                                                 }),
                                                 Text('時間')
                                               ]))
                                         ]))
                                   ])),
+                                  SizedBox(height: height*0.05),
                               Container(
                                   height: height*0.1,
                                   child: Column(
@@ -312,7 +324,8 @@ class _PopupState extends State<Popup> {
                                               child: Row(children: <Widget>[
                                                 Checkbox(value: one, onChanged: (value){
                                                   setState(() {
-                                                    one=value;
+                                                    one = value;
+                                                    multi = !value;
                                                   });
                                                 }),
                                                 Text('１回のみ')
@@ -326,6 +339,7 @@ class _PopupState extends State<Popup> {
                                                 Checkbox(value: multi, onChanged: (value){
                                                   setState(() {
                                                     multi=value;
+                                                    one=!value;
                                                   });
                                                 }),
                                                 Text('複数回')
@@ -333,6 +347,7 @@ class _PopupState extends State<Popup> {
                                           //TODO スイッチ形式で二択用意、　複数回選択時詳細設定部分表示し、回数指定（バーで選択or入力、不定期、月一など選択可）
                                         ]))
                                   ])),
+                                  SizedBox(height: height*0.05),
                               Container(
                                   height: height*0.06,
                                   child:Row(
@@ -580,7 +595,7 @@ class _PopupState extends State<Popup> {
           ]
       ),
       floatingActionButton: floatButton(),
-      body: Center(
+      body: Center(child: SingleChildScrollView(
           child: Container(
             height: height*0.85,
               width: width*0.98,
@@ -591,7 +606,7 @@ class _PopupState extends State<Popup> {
                       width: width*0.95,
                       child:todoLists())
                   ])
-            )));
+            ))));
   }
 
 }
